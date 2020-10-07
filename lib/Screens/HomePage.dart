@@ -13,8 +13,17 @@ class _HomePageState extends State<HomePage> {
     final _width = MediaQuery.of(context).size.width;
     print((_width * 0.065).toInt());
 
+    // total number of rows to be displayed
     int numberOfRows = (double.maxFinite).toInt();
+
+    // total number of squares in each row
     int numberOfSquares = (_width * 0.065).toInt();
+
+    List<int> snake = [45, 65, 85, 105, 125];
+
+    int food = 113;
+
+    var boxColor;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -28,12 +37,20 @@ class _HomePageState extends State<HomePage> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: numberOfSquares),
                   itemBuilder: (BuildContext context, int index) {
+                    if (snake.contains(index)) {
+                      boxColor = Colors.white;
+                    } else if (food == index) {
+                      boxColor = Colors.green[400];
+                    } else {
+                      boxColor = Colors.grey[900];
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(3.5)),
-                          color: Colors.grey[900],
+                          color: boxColor,
                         ),
                       ),
                     );
