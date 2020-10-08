@@ -66,11 +66,46 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  bool gameOver() {
+    for (int i = 0; i < snakePosition.length - 1; i++) {
+      for (int j = i + 1; j < snakePosition.length; j++) {
+        if (snakePosition[i] == snakePosition[j]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void showGameOverDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Game Over'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Play Again'),
+                onPressed: () {
+                  startGame();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   void startGame() {
     snakePosition = [45, 65, 85, 105, 125];
+    food = 113;
     const duration = const Duration(milliseconds: 300);
     Timer.periodic(duration, (Timer timer) {
       updateSnake();
+      if (gameOver()) {
+        timer.cancel();
+        showGameOverDialog();
+      }
     });
   }
 
@@ -81,7 +116,7 @@ class _HomePageState extends State<HomePage> {
     // print((_width * 0.065).toInt());
 
     // total number of squares in each row
-    numberOfSquares = (_width * 0.065).toInt();
+    numberOfSquares = 20;
 
     // total number of squares to be displayed
     totalSquares = 580;
