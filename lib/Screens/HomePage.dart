@@ -28,6 +28,26 @@ class _HomePageState extends State<HomePage> {
             snakePosition.add(snakePosition.last + 20);
           }
           break;
+        case 'up':
+          if (snakePosition.last - 20 < 0) {
+            snakePosition.add(snakePosition.last - 20 + numberOfRows);
+          } else {
+            snakePosition.add(snakePosition.last - 20);
+          }
+          break;
+        case 'left':
+          if (snakePosition.last % 20 == 0) {
+            snakePosition.add(snakePosition.last - 1 + 20);
+          } else {
+            snakePosition.add(snakePosition.last - 1);
+          }
+          break;
+        case 'right':
+          if ((snakePosition.last + 1) % 20 == 0) {
+            snakePosition.add(snakePosition.last + 1 - 20);
+          } else {
+            snakePosition.add(snakePosition.last + 1);
+          }
       }
       snakePosition.removeAt(0);
     });
@@ -45,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final _height = MediaQuery.of(context).size.height;
     final _width = MediaQuery.of(context).size.width;
-    print((_width * 0.065).toInt());
+    // print((_width * 0.065).toInt());
 
     // total number of squares in each row
     numberOfSquares = (_width * 0.065).toInt();
@@ -73,12 +93,31 @@ class _HomePageState extends State<HomePage> {
                       boxColor = Colors.grey[900];
                     }
 
-                    return Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(3.5)),
-                          color: boxColor,
+                    return GestureDetector(
+                      onHorizontalDragUpdate: (details) {
+                        if (direction != 'left' && details.delta.dx > 0) {
+                          direction = 'right';
+                        } else if (direction != 'right' &&
+                            details.delta.dx < 0) {
+                          direction = 'left';
+                        }
+                      },
+                      onVerticalDragUpdate: (details) {
+                        if (direction != 'up' && details.delta.dy > 0) {
+                          direction = 'down';
+                        } else if (direction != 'down' &&
+                            details.delta.dy < 0) {
+                          direction = 'up';
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(3.5)),
+                            color: boxColor,
+                          ),
                         ),
                       ),
                     );
