@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -11,26 +12,34 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<int> snakePosition = [45, 65, 85, 105, 125];
 
+  static Random random = new Random();
   int food = 113;
   int numberOfSquares;
-  int numberOfRows;
+  static int totalSquares;
 
   var boxColor;
 
   String direction = 'down';
-  void _updateSnake() {
+
+  void generateNewFood() {
+    setState(() {
+      food = random.nextInt(totalSquares + 1);
+    });
+  }
+
+  void updateSnake() {
     setState(() {
       switch (direction) {
         case 'down':
-          if (snakePosition.last + 20 > numberOfRows) {
-            snakePosition.add(snakePosition.last + 20 - numberOfRows);
+          if (snakePosition.last + 20 > totalSquares) {
+            snakePosition.add(snakePosition.last + 20 - totalSquares);
           } else {
             snakePosition.add(snakePosition.last + 20);
           }
           break;
         case 'up':
           if (snakePosition.last - 20 < 0) {
-            snakePosition.add(snakePosition.last - 20 + numberOfRows);
+            snakePosition.add(snakePosition.last - 20 + totalSquares);
           } else {
             snakePosition.add(snakePosition.last - 20);
           }
@@ -49,15 +58,19 @@ class _HomePageState extends State<HomePage> {
             snakePosition.add(snakePosition.last + 1);
           }
       }
-      snakePosition.removeAt(0);
+      if (snakePosition.last == food) {
+        generateNewFood();
+      } else {
+        snakePosition.removeAt(0);
+      }
     });
   }
 
-  void _startGame() {
+  void startGame() {
     snakePosition = [45, 65, 85, 105, 125];
     const duration = const Duration(milliseconds: 300);
     Timer.periodic(duration, (Timer timer) {
-      _updateSnake();
+      updateSnake();
     });
   }
 
@@ -70,8 +83,8 @@ class _HomePageState extends State<HomePage> {
     // total number of squares in each row
     numberOfSquares = (_width * 0.065).toInt();
 
-    // total number of rows to be displayed
-    numberOfRows = 580;
+    // total number of squares to be displayed
+    totalSquares = 580;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -81,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: GridView.builder(
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: numberOfRows,
+                  itemCount: totalSquares,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: numberOfSquares),
                   itemBuilder: (BuildContext context, int index) {
@@ -130,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: _startGame,
+                    onTap: startGame,
                     child: Container(
                       child: Text(
                         'Start',
