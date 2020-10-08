@@ -9,6 +9,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<int> snakePosition = [45, 65, 85, 105, 125];
+
+  int food = 113;
+  int numberOfSquares;
+  int numberOfRows;
+
+  var boxColor;
+
+  String direction = 'down';
+  void _updateSnake() {
+    setState(() {
+      switch (direction) {
+        case 'down':
+          if (snakePosition.last + 20 > numberOfRows) {
+            snakePosition.add(snakePosition.last + 20 - numberOfRows);
+          } else {
+            snakePosition.add(snakePosition.last + 20);
+          }
+          break;
+      }
+      snakePosition.removeAt(0);
+    });
+  }
+
+  void _startGame() {
+    snakePosition = [45, 65, 85, 105, 125];
+    const duration = const Duration(milliseconds: 300);
+    Timer.periodic(duration, (Timer timer) {
+      _updateSnake();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _height = MediaQuery.of(context).size.height;
@@ -16,40 +48,10 @@ class _HomePageState extends State<HomePage> {
     print((_width * 0.065).toInt());
 
     // total number of squares in each row
-    int numberOfSquares = (_width * 0.065).toInt();
+    numberOfSquares = (_width * 0.065).toInt();
 
     // total number of rows to be displayed
-    int numberOfRows = 580;
-
-    List<int> snakePosition = [45, 65, 85, 105, 125];
-
-    int food = 113;
-
-    var boxColor;
-
-    String direction = 'down';
-    void _updateSnake() {
-      setState(() {
-        switch (direction) {
-          case 'down':
-            if (snakePosition.last + 20 > numberOfRows) {
-              snakePosition.add(snakePosition.last + 20 - numberOfRows);
-            } else {
-              snakePosition.add(snakePosition.last + 20);
-            }
-            break;
-        }
-        snakePosition.removeAt(0);
-      });
-    }
-
-    void _startGame() {
-      snakePosition = [45, 65, 85, 105, 125];
-      const duration = const Duration(milliseconds: 300);
-      Timer.periodic(duration, (Timer timer) {
-        _updateSnake();
-      });
-    }
+    numberOfRows = 580;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -63,47 +65,23 @@ class _HomePageState extends State<HomePage> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: numberOfSquares),
                   itemBuilder: (BuildContext context, int index) {
-                    // if (snakePosition.contains(index)) {
-                    //   boxColor = Colors.white;
-                    // } else if (food == index) {
-                    //   boxColor = Colors.green[400];
-                    // } else {
-                    //   boxColor = Colors.grey[900];
-                    // }
+                    if (snakePosition.contains(index)) {
+                      boxColor = Colors.white;
+                    } else if (food == index) {
+                      boxColor = Colors.green[400];
+                    } else {
+                      boxColor = Colors.grey[900];
+                    }
 
-                    if (snakePosition.contains(index))
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.5)),
-                            color: Colors.white,
-                          ),
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(3.5)),
+                          color: boxColor,
                         ),
-                      );
-                    else if (food == index)
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.5)),
-                            color: Colors.green[400],
-                          ),
-                        ),
-                      );
-                    else
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.5)),
-                            color: Colors.grey[900],
-                          ),
-                        ),
-                      );
+                      ),
+                    );
                   }),
             ),
             Padding(
