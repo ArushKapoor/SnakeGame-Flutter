@@ -127,38 +127,36 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: totalSquares,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: numberOfSquares),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (snakePosition.contains(index)) {
-                      boxColor = Colors.white;
-                    } else if (food == index) {
-                      boxColor = Colors.green[400];
-                    } else {
-                      boxColor = Colors.grey[900];
-                    }
+              child: GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  if (direction != 'left' && details.delta.dx > 0) {
+                    direction = 'right';
+                  } else if (direction != 'right' && details.delta.dx < 0) {
+                    direction = 'left';
+                  }
+                },
+                onVerticalDragUpdate: (details) {
+                  if (direction != 'up' && details.delta.dy > 0) {
+                    direction = 'down';
+                  } else if (direction != 'down' && details.delta.dy < 0) {
+                    direction = 'up';
+                  }
+                },
+                child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: totalSquares,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: numberOfSquares),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (snakePosition.contains(index)) {
+                        boxColor = Colors.white;
+                      } else if (food == index) {
+                        boxColor = Colors.green[400];
+                      } else {
+                        boxColor = Colors.grey[900];
+                      }
 
-                    return GestureDetector(
-                      onHorizontalDragUpdate: (details) {
-                        if (direction != 'left' && details.delta.dx > 0) {
-                          direction = 'right';
-                        } else if (direction != 'right' &&
-                            details.delta.dx < 0) {
-                          direction = 'left';
-                        }
-                      },
-                      onVerticalDragUpdate: (details) {
-                        if (direction != 'up' && details.delta.dy > 0) {
-                          direction = 'down';
-                        } else if (direction != 'down' &&
-                            details.delta.dy < 0) {
-                          direction = 'up';
-                        }
-                      },
-                      child: Padding(
+                      return Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Container(
                           decoration: BoxDecoration(
@@ -167,9 +165,9 @@ class _HomePageState extends State<HomePage> {
                             color: boxColor,
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
