@@ -10,10 +10,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<int> snakePosition = [45, 65, 85, 105, 125];
+  static List<int> snakePosition = [45, 65, 85, 105, 125];
 
   static Random random = new Random();
-  int food = 113;
+  static int food = 113;
   int numberOfSquares;
   static int totalSquares;
 
@@ -21,10 +21,20 @@ class _HomePageState extends State<HomePage> {
 
   String direction = 'down';
 
+  bool hasGameStarted = false;
+  Timer timer;
+
   void generateNewFood() {
     setState(() {
       food = random.nextInt(totalSquares + 1);
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    timer.cancel();
+    super.dispose();
   }
 
   void updateSnake() {
@@ -101,6 +111,7 @@ class _HomePageState extends State<HomePage> {
     food = 113;
     const duration = const Duration(milliseconds: 300);
     Timer.periodic(duration, (Timer timer) {
+      this.timer = timer;
       updateSnake();
       if (gameOver()) {
         timer.cancel();
@@ -112,6 +123,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _height = MediaQuery.of(context).size.height;
+    // print(MediaQuery.of(context).devicePixelRatio);
     final _width = MediaQuery.of(context).size.width;
     // print((_width * 0.065).toInt());
 
@@ -120,6 +132,11 @@ class _HomePageState extends State<HomePage> {
 
     // total number of squares to be displayed
     totalSquares = 580;
+
+    if (!hasGameStarted) {
+      startGame();
+      hasGameStarted = true;
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -167,30 +184,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     }),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 10.0, top: 20.0, right: 10.0, bottom: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: startGame,
-                    child: Container(
-                      child: Text(
-                        'Start',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    child: Text(
-                      '@CreatedByArush',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
